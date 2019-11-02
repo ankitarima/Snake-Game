@@ -11,6 +11,18 @@ ground.src = "img/ground.png";
 const foodImg = new Image();
 foodImg.src = "img/food.png";
 
+const gameOver = new Image();
+gameOver.src = "img/abhi-game-over.png";
+
+const playAgain = new Image();
+playAgain.src = "img/abhi-play-again.png";
+
+const snakeHead = new Image();
+snakeHead.src = "img/s3.png";
+
+const snakeScale = new Image();
+snakeScale.src = "img/scale.png";
+
 //load audio files
 const dead =  new Audio();
 const eat =  new Audio();
@@ -18,6 +30,7 @@ const up =  new Audio();
 const left =  new Audio();
 const right =  new Audio();
 const down =  new Audio();
+const over =  new Audio();
 
 dead.src = "audio/dead.mp3";
 eat.src = "audio/eat.mp3";
@@ -25,6 +38,7 @@ up.src = "audio/up.mp3";
 left.src = "audio/left.mp3";
 right.src = "audio/right.mp3";
 down.src = "audio/down.mp3";
+over.src = "audio/game-over.mp3";
 
 //create the snake
 let snake = [];
@@ -57,9 +71,13 @@ function direction(event){
   } else if( key == 39 && d != "LEFT"){
     d = "RIGHT";
     right.play();
+	
   } else if( key == 40 && d != "UP"){
     d = "DOWN";
     down.play();
+  }
+  else if( key == 32){
+    location.reload();
   }
 }
 
@@ -76,11 +94,14 @@ function collision(head, array){
 //draw everything to the canvas
 function draw() {
   ctx.drawImage(ground,0,0);
-
+  
   for(let i = 0; i < snake.length; i++){
-    ctx.fillStyle = (i == 0) ? "green" : "white";
-    ctx.fillRect(snake[i].x, snake[i].y, box, box);
-
+    
+	if(i==0)
+	ctx.drawImage(snakeHead,snake[i].x, snake[i].y,30,30);
+	else{
+    ctx.drawImage(snakeScale,snake[i].x, snake[i].y,30,30);
+	}
     ctx.strokeStyle = "red";
     ctx.strokeRect(snake[i].x, snake[i].y, box, box);
   }
@@ -122,6 +143,10 @@ function draw() {
   if(snakeX < box || snakeX > 17*box || snakeY < 3*box || snakeY > 17*box || collision(newHead,snake)) {
     clearInterval(game);
     dead.play();
+	over.play();
+
+   	ctx.drawImage(gameOver,3 * box, 7*box);
+	ctx.drawImage(playAgain,5 * box,10 *box,300	,50);
   }
 
   snake.unshift(newHead);
@@ -129,6 +154,7 @@ function draw() {
   ctx.fillStyle = "white";
   ctx.font = "45px Change one";
   ctx.fillText(score,2*box,1.6*box);
+  
 }
 
 // call draw function every 100 ms
